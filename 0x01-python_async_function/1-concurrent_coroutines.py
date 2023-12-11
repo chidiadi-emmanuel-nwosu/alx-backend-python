@@ -4,6 +4,7 @@ from typing import List
 
 wait_random = __import__('0-basic_async_syntax').wait_random
 
+
 async def wait_n(n: int, max_delay: int) -> List[float]:
     """
     Asynchronously spawns 'wait_random' 'n' times with specified 'max_delay'.
@@ -13,7 +14,8 @@ async def wait_n(n: int, max_delay: int) -> List[float]:
     - max_delay (int): The maximum delay value for each 'wait_random' call.
 
     Returns:
-    - List[float]: A list of delays (float values) in ascending order without using 'sort()'.
+    - List[float]: A list of delays (float values) in ascending order
+                   without using 'sort()'.
     """
     tasks = [wait_random(max_delay) for i in range(n)]
     delays = []
@@ -22,5 +24,4 @@ async def wait_n(n: int, max_delay: int) -> List[float]:
         delay = await task
         delays.append(delay)
 
-    delays.sort()
-    return delays
+    return sorted(delays)
