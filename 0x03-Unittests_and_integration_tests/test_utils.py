@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ unittest for utils
 """
-from typing import Mapping, Any, Sequence, Dict
+from typing import Mapping, Any, Sequence, Dict, Callable
 from parameterized import parameterized
 import unittest
 from unittest.mock import patch, Mock
@@ -65,13 +65,13 @@ class TestMemoize(unittest.TestCase):
             """ test class
             """
 
-            def a_method(self):
+            def a_method(self) -> int:
                 """ a_method
                 """
                 return 42
 
             @memoize
-            def a_property(self):
+            def a_property(self) -> Callable:
                 """ a_property
                 """
                 return self.a_method()
