@@ -8,7 +8,6 @@ from unittest.mock import patch, Mock, MagicMock, PropertyMock
 client = __import__('client')
 
 
-
 class TestGithubOrgClient(unittest.TestCase):
     """ test cases for client
     """
@@ -29,13 +28,36 @@ class TestGithubOrgClient(unittest.TestCase):
         known_payload = {
                 "repos_url": "https://api.github.com/repos/example"
                 }
-        with patch.object(client.GithubOrgClient, 'org', new_callable=PropertyMock) as mock_org:
+        with patch.object(client.GithubOrgClient, 'org',
+                          new_callable=PropertyMock) as mock_org:
             mock_org.return_value = known_payload
             instance = client.GithubOrgClient('example')
             result = instance._public_repos_url
 
             self.assertEqual(result, known_payload['repos_url'])
 
+    @patch('client.get_json')
+    def test_public_repos(self, mock_get_json: MagicMock) -> None:
+        """ test_public_repos
+        """
+        payload = {
+            "repos_url": "https://api.github.com/repos/example",
+            "repos": [{"name": "repo1"}, {"name": "repo2"}]
+            }
+        mock_get_json.return_value = payload['repos']
+
+        with patch.object(
+                client.GithubOrgClient,
+                '_public_repos_url',
+                return_value=payload['repos_url'],
+                new_callable=PropertyMock
+                ) as mock_public_repos_url:
+            instance = client.GithubOrgClient('example')
+            repos = instance.public_repos()
+
+            self.assertEqual(repos, ["repo1", "repo2"])
+            mock_get_json.assert_called_once()
+            mock_public_repos_url.assert_called_once()
 
 
 if __name__ == "__main__":
